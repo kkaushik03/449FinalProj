@@ -1,0 +1,47 @@
+	1.	Test 1: Create plan
+        Sends a POST /plans with a new plan payload and asserts you get back a 200 response containing an "id".
+	2.	Test 2: Duplicate plan fails
+        Attempts to create the same plan twice and asserts the second call returns a 400 with a “Plan name must be unique” error.
+	3.	Test 3: Update plan
+	    Creates a plan
+	    Sends PUT /plans/{plan_id} to change its name
+	    Verifies you get a 200 and that viewing the subscription reflects the new name.
+	4.	Test 4: Delete plan
+	    Creates a plan
+	    Deletes it via DELETE /plans/{plan_id} and checks for a 200+"deleted"
+	    Confirms further updates to that plan ID return a 404.
+	5.	Test 5: Create permission
+        Posts to POST /permissions with a new permission and asserts a 200 + "id" in the response.
+	6.	Test 6: Duplicate permission fails
+        Tries to add the same permission twice and checks the second call returns 400 with a uniqueness error.
+	7.	Test 7: Update permission
+	    Creates a permission
+	    Sends PUT /permissions/{permission_id} to modify its endpoint
+	    Asserts you get back 200+"updated".
+	8.	Test 8: Delete permission
+	    Creates a permission
+	    Deletes it via DELETE /permissions/{permission_id} and asserts 200+"deleted".
+	9.	Test 9: Subscribe & duplicate fails
+	    Creates a plan
+	    Subscribes user 42 to it via POST /subscriptions—expects 200+"subscribed"
+	    Attempts a second subscribe for the same user and expects a 400 error.
+	10.	Test 10: Modify subscription
+	    Subscribes a user to plan A
+	    Sends PUT /subscriptions/{user_id} to switch them to plan B
+	    Expects 200+"updated".
+	11.	Test 11: View subscription details
+	    Creates a permission and a plan that includes it
+	    Subscribes a user
+	    Calls GET /subscriptions/{user_id} and asserts the response contains the correct plan data and list of permissions.
+	12.	Test 12: View usage empty & limit status
+	    Subscribes a user to a plan with one permission
+	    Calls GET /subscriptions/{user_id}/usage—expects an empty list
+	    Calls GET /usage/{user_id}/limit—expects the permission’s used to be 0.
+	13.	Test 13: Access control & usage tracking
+	    Subscribes a user to a plan with a permission limit of 2
+	    Checks /access/{user_id}/{endpoint} returns access: true
+	    Calls POST /usage/{user_id} three times: first two succeed, the third returns a 403 “Usage limit reached.”
+	14.	Test 14: /services/{name} integration
+	    Adds a permission for service2 and subscribes a user with a limit of 1
+	    Calls GET /services/service2?user_id={user} twice: first returns 200 OK, second returns 403
+	    Verifies that calling an unknown service (e.g. /services/unknown) returns 404.
